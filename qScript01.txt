@@ -1,0 +1,1726 @@
+/*Sub DeNoted
+数组下标|像素坐标|代表功能|颜色值|备注
+[0]1096,179 前进 fbfcfb;fbfbfb;fcfdfb
+[1] 590, 95 红狼 5e4fe7
+[2] 668,159 粉狼 8a7ed5
+[3]  88,247 感染 FFF50D,FFFC00(台)
+[4] 557,357 弹框 7E5E1E;C37D19 ；中级升星材料 4E1C01 click570,470
+[5-12] xx 386|386|397|389|422|415|410|415 暴走
+       yy 409|415|409|416|412|413|424|427 ffffff
+[13]1106,527 跳过战斗 dbd5e7；dcd5e7
+[14]1099,121 点下一区 fffffa;fdfcff;E8EDFF
+[15-16] xx 20|979  跳过出卡,Click4(925,Qiang)
+        yy 350|575 4c2403|1d0900
+[17] 801,81 好友推送 E7E7E7 Click(832,79)
+[18] 378,506探索界面 c88a21, 战斗结束 5B4A3A
+[19] 652,86 点数分配 E4CDB5;E4CEB6
+[20] 503,290 蓝毛 ffee8c;
+[21] 720,545 新卡 d19fc1;D9DAAF
+----药水补充
+[22] 726,182 补药 FFFFFB;关闭 Click(969,195)
+[23] 651,275 颜色：蓝:D7FE2A；红:7BA1FE
+[24] 753,506 次数：有:F7FFFF;EDFFFF；无:807670
+[25] 874,310 位置 |有:FFFFE8;FFFFFF
+[26] 874,420 位置 |无:7C7672
+----卡牌满------战斗冷却----被消灭--- 3E3E3E;FFFFFF
+[27]492,293|[31]585,277|[35]642,278
+[28]492,294|[32]585,279|[36]642,279
+[29]493,293|[33]585,281[37]643,278
+[30]493,294|[34]585,283|[38]643,279
+----
+[39]BC获取(118+cInt((BCRcvLmt+2.7)/5.4),117)
+[40]是小窗口 
+-----
+打感染 卡组->跳过->失败界面->[好友推送]->再打/放弃
+或者有 卡组->跳过->胜利界面->跳过出卡->结束
+End Sub*/
+/* Version 8.8*/
+
+//定义全局变量
+Dimenv Hwnd01, HwndPP01
+Dim PosX, PosY, PotX, PotY
+
+PosX = 0 : PosY = 0 : PotX = 0 : PotY = 0
+
+/*Sub GetBCValue
+Dim BinNumChar(10)
+BCValue = 600
+BinNumChar(1) = "000111111111111000"
+BinNumChar(2) = "000110011101011010111001100011"
+BinNumChar(3) = "000101001110011100111111001100"
+BinNumChar(4) = "111000010000100111111111100100"
+BinNumChar(5) = "1001010011100111111001100"
+BinNumChar(6) = "111001111010011100111111001100"
+BinNumChar(7) = "0000000011111111000000000"
+BinNumChar(8) = "001101111010001100010111000110"
+BinNumChar(9) = "000001101111011100111111011000"
+BinNumChar(0) = "11100111100001100011000111111011000"
+
+Colors = Plugin.BKeast.MutiGetC(Hwnd01, 151, 113, "23-5") & "|0000"
+Dim StrFragmnt,StrBin,StrAt(2),StrBt(2)
+StrFragmnt = Split(Colors, "FF|")
+SS = "" : SS_ = "" : j = 0
+For i = 0 To UBound(StrFragmnt) 
+	For (len(StrFragmnt(i)) + 3) / 7 - 1
+	SS = SS & "0."		
+	Next
+	SS = SS & "1."
+Next
+StrBin = Split(SS, ".")
+For i = 0 To (UBound(StrBin) - 1) / 5
+	SS_ = SS_ & StrBin(i)
+	SS_ = SS_ & StrBin(i + 23)
+	SS_ = SS_ & StrBin(i + 46)
+	SS_ = SS_ & StrBin(i + 69)
+	SS_ = SS_ & StrBin(i + 92)
+Next
+
+For i = 0 To 9
+	a0 = instr(SS_, BinNumChar(i))
+	If a0 <> 0 Then 
+		StrAt(j) = a0 : StrBt(j) = i : j = j + 1
+		a1 = instr(a0 + 1, SS_, BinNumChar(i), 1)
+		If a1 <> 0 Then 
+			StrAt(j) = a1 : StrBt(j) = i : j = j + 1
+			a2 = instr(a1 + 1, SS_, BinNumChar(i), 1)
+			If a2 <> 0 Then 
+				StrAt(j) = a2 : StrBt(j) = i : j = j + 1
+			End If 
+		End If 
+	End If
+Next
+If StrAt(0) > StrAt(1) Then 
+	m = StrAt(0) : StrAt(0) = StrAt(1) : StrAt(1) = m
+	m = StrBt(0) : StrBt(0) = StrBt(1) : StrBt(1) = m
+End If
+If StrAt(1) > StrAt(2) Then 
+	m = StrAt(1) : StrAt(1) = StrAt(2) : StrAt(2) = m
+	m = StrBt(1) : StrBt(1) = StrBt(2) : StrBt(2) = m
+End If
+If StrAt(0) > StrAt(2) Then 
+	m = StrAt(0) : StrAt(0) = StrAt(2) : StrAt(2) = m
+	m = StrBt(0) : StrBt(0) = StrBt(2) : StrBt(2) = m
+End If
+If StrAt(0) > StrAt(1) Then 
+	m = StrAt(0) : StrAt(0) = StrAt(1) : StrAt(1) = m
+	m = StrBt(0) : StrBt(0) = StrBt(1) : StrBt(1) = m
+End If
+If StrAt(1) > StrAt(2) Then 
+	m = StrAt(1) : StrAt(1) = StrAt(2) : StrAt(2) = m
+	m = StrBt(1) : StrBt(1) = StrBt(2) : StrBt(2) = m
+End If
+If StrAt(0) > StrAt(2) Then 
+	m = StrAt(0) : StrAt(0) = StrAt(2) : StrAt(2) = m
+	m = StrBt(0) : StrBt(0) = StrBt(2) : StrBt(2) = m
+End If
+
+BCValue = StrBt(0) & StrBt(1) & StrBt(2) + 0
+
+End Sub*/
+Sub WriteInINI
+
+
+Dim name, TimesLeft, StringDelay, Qiang, UseCard, Contnus, TakeOrNot, BCRcvLmt, NextArea, NextDistrict, FullCard, LevelUp
+Dim Index1, Index3, Index10, wolfremind, baozouremind, baozoucard, rpWolf, ColorString,HittedTimes
+Dim disX, disY, intX, intY, CharName, Text, InfRem, Contrast, Path
+PosX=0:PosY=0
+BCRcvLmt = Form1.InputBox2.Text + 0 : Jump = ""
+
+InfRem = "" : HittedTimes = 0
+Index1 = Array(357, 357,300)
+Index3 = Array(81, 141, 201, 261)
+
+//获取游戏界面的窗口句柄
+If Form1.CheckBox1.Value = 0 Then
+	a = MsgBox ("运行过程中不手动点界面！"&vbcr &vbcr&"先点击游戏界面，" & vbcr &"然后点击该窗口，" & vbcr& "鼠标移开，停到游戏上，"&vbcr&"键盘敲回车。" , 4096, "使用提醒")
+Else 
+	a = MsgBox ("您启用了调试模式，"&vbcr &"这将会把敌人列表中首个目击者名字记录下来。"&vbcr &vbcr&"将游戏打开主界面，打开敌人列表，" & vbcr &"滚动列表，使你要识别的角色名位于敌人列表第一位，" & vbcr& "感染者已被消灭、未被消灭皆可。"&vbcr&"完成以上步骤，确认本窗口继续。" , 4096, "调试模式")
+	a = MsgBox ("先点击游戏界面，" & vbcr &"然后点击该窗口，" & vbcr& "鼠标移开，停到游戏上，"&vbcr&"键盘敲回车。" , 4096, "调试模式")
+End If
+Delay 300
+Hwnd01 = Plugin.Window.MousePoint()
+Form1.Label19.Caption = "跑图器已开始运行"
+//获得顶层父窗句柄HwndPP
+HwndP= Hwnd01
+Rem FindParentHundle
+HwndPP = HwndP
+HwndP = Plugin.lxj_Plug.lxj_FindParentHwnd(HwndPP)
+If not(HwndP = 0) Then 
+	Goto FindParentHundle
+End If
+HwndPP01 = HwndPP
+Call Plugin.File.WriteINI("Hwnd", "Hwnd01", Cstr(Hwnd01), ".\Temp.ini")
+Call Plugin.File.WriteINI("Hwnd", "HwndPP01", Cstr(HwndPP01), ".\Temp.ini")
+
+name = Form1.InputBox7.Text
+Call Plugin.Window.SetText(HwndPP01, "星纪元-"&name)
+
+
+
+//定义坐标偏移量
+PositionError = 0
+Rem DisPosition
+dXdY = Plugin.Bkgnd.FindColor(Hwnd01, 0, 0, 500, 500, "D8D320")
+ZB = InStr(dXdY, "|")
+dX = Clng(Left(dXdY, ZB - 1)) : dY = Clng(Right(dXdY, Len(dXdY) - ZB))
+If dx < 0 and dy < 0 Then 
+	PositionError = PositionError + 1
+	Form1.Label19.Caption = "定坐标失败，重试...第"&PositionError&"次"
+	Call Plugin.Window.Move(HwndPP01, RectPr(0) - 1, RectPr(1))
+	Delay 200
+	Call Plugin.Window.Move(HwndPP01, RectPr(0) + 1, RectPr(1))
+	Delay 800
+	If PositionError >= 5 Then 
+		MsgBox "无法定位坐标，" & vbcr & "请确保界面左上角有钻石图案后，" & vbcr & "再次启动跑图器。"
+		EndScript 
+	End If
+	Goto DisPosition
+End If
+DisX = dX - 127-potX : DisY = dY - 81 -potY
+
+//定义数组
+Dim x(41), y(41), x1(41), y1(41), Pixel, Store, xx, yy, smallblue, smallred, positionset
+xx = "" : yy = "" : Once = 0 : SmallBlue = 1 : SmallRed = 1 
+
+//进程所在路径
+Path = Plugin.lxj_Plug.lxj_Pathfile()
+Path1 = Path & "Wolf Reminder1.wav"
+Path2 = Path & "Wolf Reminder2.wav"
+//坐标寄存器
+x(0) = 1096 : x(1) = 590  : x(2) = 668  : x(3) = 88   : x(4) = 557  : x(5) = 386
+x(6) = 386  : x(7) = 397  : x(8) = 389  : x(9) = 422  : x(10) = 415 : x(11) = 410
+x(12) = 415 : x(13) = 1106: x(14) = 1099: x(15) = 20  : x(16) = 979 : x(17) = 801
+x(18) = 378 : x(19) = 888 : x(20) = 503 : x(21) = 162 : x(22) = 726 : x(23) = 651
+x(24) = 753 : x(25) = 874 : x(26) = 874 : x(27) = 492 : x(28) = 492 : x(29) = 493
+x(30) = 493 : x(31) = 585 : x(32) = 585 : x(33) = 585 : x(34) = 585 : x(35) = 642
+x(36) = 642 : x(37) = 643 : x(38) = 643 : x(39) = 118 + cInt((BCRcvLmt + 2.7) / 5.4)
+x(40) = 623 : x(41) = 16
+
+y(0) = 179  : y(1) = 95   : y(2) = 159  : y(3) = 247  : y(4) = 357  : y(5) = 409
+y(6) = 415  : y(7) = 409  : y(8) = 416  : y(9) = 412  : y(10) = 413 : y(11) = 424
+y(12) = 427 : y(13) = 527 : y(14) = 121 : y(15) = 350 : y(16) = 575 : y(17) = 81
+y(18) = 506 : y(19) = 69  : y(20) = 290 : y(21) = 78  : y(22) = 182 : y(23) = 275
+y(24) = 506 : y(25) = 310 : y(26) = 420 : y(27) = 293 : y(28) = 294 : y(29) = 293
+y(30) = 294 : y(31) = 277 : y(32) = 279 : y(33) = 281 : y(34) = 283 : y(35) = 278
+y(36) = 279 : y(37) = 278 : y(38) = 279 : y(39) = 117
+y(40) = 365 : y(41) = 3
+
+Contrast = "6A6A6A|6A6A6A|6A6A6A|6A6A6A|6A6A6A|6B6A6A|6B6A6A|6B6A6A|6B6A6A|6B6A6A|6B6A6A|6B6A6A|6B6A6A|6F6E6E|6F6E6E|706F6F|706F6F|717070|717070|717171|717171|6F6E6E|6F6E6E|6E6E6E|6D6C6C|6C6B6B|6B6A6A|6A6A6A|6A6969|717274|707173|6F7172|6E7071|6E6F71|6C6E6F"
+Store = Split(Contrast, "|")
+
+For i = 0 To 41
+	x1(i) = x(i) + DisX
+	y1(i) = y(i) + DisY
+Next
+PositionSet=""
+For i = 0 To 40
+	PositionSet = PositionSet & cStr(x1(i)) & "," & cStr(y1(i)) & "|"
+Next
+PositionSet = PositionSet & cStr(x1(41)) & "," & cStr(y1(41)) 
+
+
+
+	Form1.Label19.Caption = "正在识别放感染的号"
+	strcolor = Plugin.BKeast.MutiGetC(Hwnd01, 770 + disX+PosX, 205 + disY+PosY, "1-272")
+	a0 = InStr(1,strcolor, "07C0FC")//参战点亮
+	b0 = InStr(1,strcolor, "007DC1")//参战不亮
+	c0 = InStr(1,strcolor, "F55F00")//战绩不亮
+	d0 = InStr(1,strcolor, "F9A300")//战绩点亮
+	
+	If a0 = 0 and b0 = 0 and c0 = 0 and d0 = 0 Then 
+		MsgBox "读取失败，可能由于游戏窗口不在顶层，请重试。", 4096, "调试模式"
+		Form1.Label19.Caption = "请点击“调试”并再次识别"
+		EndScript 
+	End If
+	If a0 <= 0 Then 
+		a0 = 10000
+	End If
+	If b0 <= 0 Then 
+		b0 = 10000
+	End If
+	If c0 <= 0 Then 
+		c0 = 10000
+	End If
+	If d0 <= 0 Then 
+		d0 = 10000
+	End If
+	If a0 < b0 and a0 < c0 and a0 < d0 Then 
+		intX = 511 + disX : intY = 157 + DisY + ((a0 - 1) / 7)
+	ElseIf b0 < c0 and b0 < d0 Then
+		intX = 511 + disX : intY = 157 + DisY + ((b0 - 1) / 7)
+	ElseIf c0 < d0 Then
+		intX = 511 + disX : intY = 157 + DisY + ((c0 - 1) / 7)
+	Else 
+		intX = 511 + disX : intY = 157 + DisY + ((d0 - 1) / 7)
+	End If
+	chartmp = chnMD5(intX, intY)
+	Call Plugin.File.WriteINI("JohnDoe", "CharName", chartmp, Path & "Config.ini")
+	MsgBox "敌人列表第一个目击者名字已识别并记录。"&vbcr&vbcr&"左上模式->停主界面抢(感染)"&vbcr&"右侧设定->刀指定名字"&vbcr&"此功能，将识别已记录的角色名；"&vbcr&"刷活动点，不打别人感染。",4096,"调试模式"
+	Form1.CheckBox1.Value = 0
+	EndScript 
+End Sub
+
+Sub Thread()
+
+Dim name, TimesLeft, StringDelay, Qiang, UseCard, Contnus, TakeOrNot, BCRcvLmt, NextArea, NextDistrict, FullCard, LevelUp
+Dim Index1, Index3, Index10, wolfremind, baozouremind, baozoucard, rpWolf, ColorString,HittedTimes
+Dim disX, disY, intX, intY, CharName, Text, InfRem, Contrast, Path
+PosX=0:PosY=0:PotX=0:PotY=0
+BCRcvLmt = Form1.InputBox2.Text + 0 : Jump = ""
+
+InfRem = "" :  HittedTimes = 0
+Index1 = Array(357, 357,300)
+Index3 = Array(81, 141, 201, 261)
+
+//获取游戏界面的窗口句柄
+If Form1.CheckBox1.Value = 0 Then
+	a = MsgBox ("运行过程中不手动点界面！"&vbcr &vbcr&"先点击游戏界面，" & vbcr &"然后点击该窗口，" & vbcr& "鼠标移开，停到游戏上，"&vbcr&"键盘敲回车。" , 4096, "使用提醒")
+Else 
+	a = MsgBox ("您启用了调试模式，"&vbcr &"这将会把敌人列表中首个目击者名字记录下来。"&vbcr &vbcr&"将游戏打开主界面，打开敌人列表，" & vbcr &"滚动列表，使你要识别的角色名位于敌人列表第一位，" & vbcr& "感染者已被消灭、未被消灭皆可。"&vbcr&"完成以上步骤，确认本窗口继续。" , 4096, "调试模式")
+	a = MsgBox ("先点击游戏界面，" & vbcr &"然后点击该窗口，" & vbcr& "鼠标移开，停到游戏上，"&vbcr&"键盘敲回车。" , 4096, "调试模式")
+End If
+Delay 300
+Hwnd01 = Plugin.Window.MousePoint()
+Form1.Label19.Caption = "跑图器已开始运行"
+//获得顶层父窗句柄HwndPP
+HwndP= Hwnd01
+Rem FindParentHundle
+HwndPP = HwndP
+HwndP = Plugin.lxj_Plug.lxj_FindParentHwnd(HwndPP)
+If not(HwndP = 0) Then 
+	Goto FindParentHundle
+End If
+HwndPP01 = HwndPP
+Call Plugin.File.WriteINI("Hwnd", "Hwnd01", Cstr(Hwnd01), ".\Temp.ini")
+Call Plugin.File.WriteINI("Hwnd", "HwndPP01", Cstr(HwndPP01), ".\Temp.ini")
+
+name = Form1.InputBox7.Text
+Call Plugin.Window.SetText(HwndPP01, "星纪元-"&name)
+
+
+//定义坐标偏移量
+PositionError = 0
+Rem DisPosition
+dXdY = Plugin.Bkgnd.FindColor(Hwnd01, 0, 0, 500, 500, "D8D320")
+ZB = InStr(dXdY, "|")
+dX = Clng(Left(dXdY, ZB - 1)) : dY = Clng(Right(dXdY, Len(dXdY) - ZB))
+If dx < 0 and dy < 0 Then 
+	PositionError = PositionError + 1
+	Form1.Label19.Caption = "定坐标失败，重试...第"&PositionError&"次"
+	Call Plugin.Window.Move(HwndPP01, RectPr(0) - 1, RectPr(1))
+	Delay 200
+	Call Plugin.Window.Move(HwndPP01, RectPr(0) + 1, RectPr(1))
+	Delay 800
+	If PositionError >= 5 Then 
+		MsgBox "无法定位坐标，" & vbcr & "请确保界面左上角有钻石图案后，" & vbcr & "再次启动跑图器。"
+		EndScript 
+	End If
+	Goto DisPosition
+End If
+DisX = dX - 127-potX : DisY = dY - 81 -potY
+
+//定义数组
+Dim x(41), y(41), x1(41), y1(41), Pixel, Store, xx, yy, smallblue, smallred, positionset
+xx = "" : yy = "" : Once = 0 : SmallBlue = 1 : SmallRed = 1 
+
+//进程所在路径
+Path = Plugin.lxj_Plug.lxj_Pathfile()
+Path1 = Path & "Wolf Reminder1.wav"
+Path2 = Path & "Wolf Reminder2.wav"
+//坐标寄存器
+x(0) = 1096 : x(1) = 590  : x(2) = 668  : x(3) = 88   : x(4) = 557  : x(5) = 386
+x(6) = 386  : x(7) = 397  : x(8) = 389  : x(9) = 422  : x(10) = 415 : x(11) = 410
+x(12) = 415 : x(13) = 1106: x(14) = 1099: x(15) = 20  : x(16) = 979 : x(17) = 801
+x(18) = 378 : x(19) = 888 : x(20) = 503 : x(21) = 162 : x(22) = 726 : x(23) = 651
+x(24) = 753 : x(25) = 874 : x(26) = 874 : x(27) = 492 : x(28) = 492 : x(29) = 493
+x(30) = 493 : x(31) = 585 : x(32) = 585 : x(33) = 585 : x(34) = 585 : x(35) = 642
+x(36) = 642 : x(37) = 643 : x(38) = 643 : x(39) = 118 + cInt((BCRcvLmt + 2.7) / 5.4)
+x(40) = 623 : x(41) = 16
+
+y(0) = 179  : y(1) = 95   : y(2) = 159  : y(3) = 247  : y(4) = 357  : y(5) = 409
+y(6) = 415  : y(7) = 409  : y(8) = 416  : y(9) = 412  : y(10) = 413 : y(11) = 424
+y(12) = 427 : y(13) = 527 : y(14) = 121 : y(15) = 350 : y(16) = 575 : y(17) = 81
+y(18) = 506 : y(19) = 69  : y(20) = 290 : y(21) = 78  : y(22) = 182 : y(23) = 275
+y(24) = 506 : y(25) = 310 : y(26) = 420 : y(27) = 293 : y(28) = 294 : y(29) = 293
+y(30) = 294 : y(31) = 277 : y(32) = 279 : y(33) = 281 : y(34) = 283 : y(35) = 278
+y(36) = 279 : y(37) = 278 : y(38) = 279 : y(39) = 117
+y(40) = 365 : y(41) = 3
+
+Contrast = "6A6A6A|6A6A6A|6A6A6A|6A6A6A|6A6A6A|6B6A6A|6B6A6A|6B6A6A|6B6A6A|6B6A6A|6B6A6A|6B6A6A|6B6A6A|6F6E6E|6F6E6E|706F6F|706F6F|717070|717070|717171|717171|6F6E6E|6F6E6E|6E6E6E|6D6C6C|6C6B6B|6B6A6A|6A6A6A|6A6969|717274|707173|6F7172|6E7071|6E6F71|6C6E6F"
+Store = Split(Contrast, "|")
+
+For i = 0 To 41
+	x1(i) = x(i) + DisX
+	y1(i) = y(i) + DisY
+Next
+PositionSet=""
+For i = 0 To 40
+	PositionSet = PositionSet & cStr(x1(i)) & "," & cStr(y1(i)) & "|"
+Next
+PositionSet = PositionSet & cStr(x1(41)) & "," & cStr(y1(41)) 
+
+
+	QJ = 0:GR=0:YC=0:temp = 0 : AutoClaim = 0
+	Rem Start
+	Form1.Label19.Caption = "循环初始延时-" & YC
+	YC = YC + 1
+	If YC = 9999 Then 
+		YC = 0
+	End If
+	Delay StringDelay
+	
+	If temp > 5 Then 
+		ColorMsgbox = Plugin.BKeast.MutiGetC(Hwnd01, disX + PosX + 550, disY + PosY + 250, "1-200")
+		FindBox = InStr(ColorMsgbox, "F1DBC6")
+		If FindBox > 0 Then 
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 550 + DisX, (FindBox - 1) / 7 + 250 + DisY)
+		End If
+		temp = 0
+	End If
+	
+	StringDelay = Form1.InputBox1.Text + 0 : TimesLeft = Form1.InputBox5.Text + 0 : BCRcvLmt = Form1.InputBox2.Text + 0 : Qiang = Index1(Form1.ComboBox1.ListIndex) : Contnus = Form1.ComboBox2.ListIndex : UseCard = Index3(Form1.ComboBox3.ListIndex) : TakeOrNot = Form1.ComboBox5.ListIndex
+	NextDistrict = Form1.ComboBox7.ListIndex : LevelUp = Form1.ComboBox8.ListIndex : FullCard = Form1.ComboBox9.ListIndex : RPWolf = Index3(Form1.ComboBox10.ListIndex) : baozouremind = Form1.ComboBox12.ListIndex : baozoucard = Index3(Form1.ComboBox13.ListIndex) : wolfremind = Form1.ComboBox4.ListIndex : NextArea = Form1.ComboBox6.ListIndex
+	
+	If Form1.ComboBox1.ListIndex = 1 Then 
+	//如果选择抢感染
+		IsMain = Plugin.Bkgnd.GetPixelColor(Hwnd01, 28 + DisX + PotX, 180 + DisY + PotY)
+		If IsMain = "FFCE2F" or IsMain = "FFD12F" Then 
+		//如果在主界面
+			Form1.Label19.Caption = "正在主界面抢感染"
+			If Plugin.Bkgnd.GetPixelColor(Hwnd01, 446 + DisX+ PotX, 135 + DisY+PotY) = "FFFFF3" Then //如果敌人列表已打开
+				If HittedTimes > 5 Then //打6只领取卡牌
+					Delay 300
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 672 + DisX, 505 + DisY)
+					Confirm = "" : count = 0
+					Do Until Confirm = "FF8A00"
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 570 + DisX, 470 + DisY)
+						Delay 200
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 570 + DisX, 470 + DisY)
+						Delay 800
+						Confirm = Plugin.Bkgnd.GetPixelColor(Hwnd01, 500 + DisX + PotX, 486 + DisY + PotY)
+						count = count + 1
+						If count > 5 Then 
+							Exit Do 
+						End If
+					Loop
+					HittedTimes = 0
+				End If
+				If Form1.ComboBox14.ListIndex = 0 Then //所有感染者都抢刀
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 796 + DisX, 165 + DisY)//列表翻页到顶端
+					Delay 300
+					strcolor = Plugin.BKeast.MutiGetC(Hwnd01, 770 + disX+PosX, 205 + disY+PosY, "1-120")//取色找参战
+					a = InStr(strcolor, "007DC1")
+					If a > 0 Then 
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 770 + DisX, 205 + DisY + ((a - 1) / 7))//点进去打
+					Else 
+						a = InStr(strcolor, "07C0FC")
+						If a > 0 Then 
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 770 + DisX, 205 + DisY + ((a - 1) / 7))
+						End If
+					End If
+				ElseIf Form1.ComboBox14.ListIndex = 1 Then//只刀名字对的感染者
+					Text = Plugin.File.ReadINI("JohnDoe", "CharName", Path & "Config.ini")
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 796 + DisX, 165 + DisY)//列表翻页到顶端
+					Delay 100
+					strcolor = Plugin.BKeast.MutiGetC(Hwnd01, 770 + disX+PosX, 205 + disY+PosY, "1-272")//取色找参战
+					a = 0
+					Do While True
+						b = InStr(a + 1, strcolor, "07C0FC")
+						If b = 0 Then 
+							b = InStr(a + 1, strcolor, "007DC1")
+							If b = 0 Then 
+								Exit Do
+							End If
+						End If
+						If (205 + ((a - 1) / 7))>=425 Then 
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 796 + DisX, 468 + DisY)
+							Delay 200
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 796 + DisX, 468 + DisY)
+							Exit Do 
+						End If
+						a = b
+						intX = 511 + disX : intY = 157 + DisY + ((a - 1) / 7)
+						CharTemp = chnMD5(intX, intY)
+						Form1.Label19.Caption = CharTemp
+						If InStr(CharTemp, Text) = 1 Then 
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 770 + DisX, 205 + DisY + ((a - 1) / 7))
+							Delay 200
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 770 + DisX, 205 + DisY + ((a - 1) / 7))
+							Exit Do 
+						End If 
+					Loop
+				ElseIf Form1.ComboBox14.ListIndex = 2 Then//依次舔一下
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 796 + DisX, 165 + DisY)
+					Delay 300
+					strcolor = Plugin.BKeast.MutiGetC(Hwnd01, 770 + disX + PosX, 205 + disY + PosY, "1-272")
+					a = 0
+					Do While True
+						b = InStr(a + 1, strcolor, "07C0FC")
+						If b = 0 Then 
+							b = InStr(a + 1, strcolor, "007DC1")
+							If b = 0 Then 
+								Exit Do
+							End If
+						End If
+						If (205 + ((a - 1) / 7))>=425 Then 
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 796 + DisX, 468 + DisY)
+							Delay 200
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 796 + DisX, 468 + DisY)
+							Exit Do 
+						End If
+						a = b
+						intX = 511 + disX : intY = 157 + DisY + ((a - 1) / 7)
+						StrTmp = remMD5(intX,intY)
+						If InStr(InfRem,StrTmp)=0 Then 
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 770 + DisX, 205 + DisY + ((a - 1) / 7))
+							HittedTimes = HittedTimes + 1
+							InfRem = InfRem & StrTmp
+							If Len(InfRem) > 1024 Then 
+								InfRem = ""
+							End If
+							Exit Do 
+						End If 
+					Loop
+				ElseIf Form1.ComboBox14.ListIndex = 3 Then//只抢狼
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 796 + DisX, 165 + DisY)
+					Delay 300
+					strcolor = Plugin.BKeast.MutiGetC(Hwnd01, 770 + disX + PosX, 205 + disY + PosY, "1-272")
+					a = 0
+					Do While True
+						b = InStr(a + 1, strcolor, "07C0FC") : Flag = 0
+						If b = 0 Then 
+							b = InStr(a + 1, strcolor, "007DC1") : Flag = 1
+							If b = 0 Then 
+								Flag = 0
+								Exit Do
+							End If
+						End If
+						If (205 + ((a - 1) / 7)) > 476 and Flag = 1 Then 
+							Flag = 0
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 796 + DisX, 468 + DisY)
+							Delay 200
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 796 + DisX, 468 + DisY)
+							Exit Do 
+						End If
+						a = b
+						intX = 561 + disX : intY = 177 + DisY + ((a - 1) / 7)
+						IntTmp = FindWolf(intX, intY)
+						If IntTmp = 1 or IntTmp = 2 Then 
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 770 + DisX, 205 + DisY + ((a - 1) / 7))
+							IntTmp = 0
+							Exit Do
+						End If 
+					Loop
+				Else 
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 796 + DisX, 165 + DisY)
+					Delay 300
+					strcolor = Plugin.BKeast.MutiGetC(Hwnd01, 770 + disX + PosX, 205 + disY + PosY, "1-272")
+					a = 0
+					Do While True
+						b = InStr(a + 1, strcolor, "07C0FC") : Flag = 0
+						If b = 0 Then 
+							b = InStr(a + 1, strcolor, "007DC1") : Flag = 1
+							If b = 0 Then 
+								Flag = 0
+								Exit Do
+							End If
+						End If
+						If (205 + ((a - 1) / 7)) > 476 and Flag = 1 Then 
+							Flag = 0
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 796 + DisX, 468 + DisY)
+							Delay 200
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 796 + DisX, 468 + DisY)
+							Exit Do 
+						End If
+						a = b
+						intX = 561 + disX : intY = 177 + DisY + ((a - 1) / 7)
+						IntTmp = FindWolf(intX, intY)
+						If IntTmp = 1 or IntTmp = 2 Then
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 770 + DisX, 205 + DisY + ((a - 1) / 7))
+							IntTmp = 0
+							Exit Do
+						ElseIf Plugin.Bkgnd.GetPixelColor(Hwnd01, intX + PotX-61, intY + PotY) = "17074E" Then
+							Call Plugin.Bkgnd.LeftClick(Hwnd01, 770 + DisX, 205 + DisY + ((a - 1) / 7))
+							Exit Do
+						End If 
+					Loop
+				End If
+			Else 
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 750 + DisX, 600 + DisY)
+				//点开敌人列表
+				Delay 1200
+			End If
+		End If 
+	End If
+	
+	
+	Rem Start2
+	ColorString = Plugin.BKeast.MutiGetC(Hwnd01, PosX, PosY, PositionSet)
+	Pixel = Split(ColorString, "|")
+
+	If Pixel(41) = "000000" Then 
+		Goto Start
+	End If
+	//首先判断要不要回复BC
+	If Store(cInt((BCRcvLmt + 2.71) / 5.4) - 1) = Pixel(39) and BCRcvLmt <> 0 Then 
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 240 + DisX, 114 + DisY)
+		Delay 500
+		Goto Start
+		
+	//找下一区，如果自动进入下一区则点击下一区[1099,121]
+	ElseIf ("EDF6FF" = Pixel(14) or "6A75FE" = Pixel(14) or "FFFFFA" = Pixel(14) or "FDFCFF" = Pixel(14) or "E8EDFF"= Pixel(14) or "FDFFF7"= Pixel(14) or "FAFFF1"= Pixel(14) or/*America*/ "F4F0FF"= Pixel(14) or "7673FF"=pixel(14)/*America*/) And 1 = NextArea Then 
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1099 + DisX, 121 + DisY)
+		Goto Start
+		
+	//打感染中间会出现跳过战斗[1106,527]
+	ElseIf "DCD5E7" = Pixel(13) Or "DBD5E7" = Pixel(13) or "FFFDEC" = Pixel(13) or "807F76" = Pixel(13) or "FFFFD8" = pixel(13) Then
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1106 + DisX, 527 + DisY)
+		If Form1.ComboBox2.ListIndex = 0 Then 
+			Delay 3500
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 832 + DisX, 79 + DisY)
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 832 + DisX, 79 + DisY)
+			Delay 600
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 832 + DisX, 79 + DisY)
+			Delay 1000
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+			Delay 1000
+		Else 
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 360 + DisX, 60 + DisY)
+		End If
+		Goto Start
+		
+	//好友推送，用来判断是舔是刀
+	ElseIf "E7E7E7" = Pixel(17) Then
+		Form1.Label19.Caption = "关闭好友推送"
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 832 + DisX, 79 + DisY)
+		Delay 1200
+		If Contnus = 0 Then 
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+			Delay 1000
+		End If
+		Goto Start
+		
+	//出卡界面
+	ElseIf "4C2403" = Pixel(15) And "1D0900" = Pixel(16) Then
+		Form1.Label19.Caption = "正在获得卡牌-"&CK
+		CK = CK + 1
+		If CK = 9999 Then 
+			CK = 1
+		End If
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 333 + DisX, Qiang + DisY)
+		Delay 200
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 333 + DisX, Qiang + DisY)
+		Delay 200
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 333 + DisX, Qiang + DisY)
+		Delay 200
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 333 + DisX, Qiang + DisY)
+		Goto Start
+		
+	//判断是否存在前进按钮[1096,179]	
+	ElseIf "FBFBFB" = Pixel(0) Or "FBFCFB" = Pixel(0) Or "FCFDFB" = Pixel(0) or "FAFAFA" = Pixel(0) or "FAFBFA" = Pixel(0) Then 
+		Form1.Label19.Caption = "正在跑图前进-" & QJ
+		QJ = QJ + 1
+		If QJ = 9999 Then 
+			QJ = 0
+		End If
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1096 + DisX, 179 + DisY)
+		Delay 1000
+		Goto Start
+		
+	//以下红粉蓝狼的处理过程pixel1(590,95) pixel3(88,247)[FFFC00,FFF50D]
+	ElseIf "5E4FE7" = Pixel(1) and ("FFF50D" = Pixel(3) or"FFFC00" = Pixel(3))  or "8A7ED5" = Pixel(2) and ("FFF50D" = Pixel(3) or"FFFC00" = Pixel(3)) or "FFEE8C" = Pixel(20) and ("FFF50D" = Pixel(3) or"FFFC00" = Pixel(3)) Then
+		Form1.Label19.Caption = "恭喜出现萌狼！"
+		If wolfremind > 1 Then 
+			If "5E4FE7" = Pixel(1) Then 
+				a = MsgBox("红狼，已暂停脚本。" & vbcr & "点确认自动打。", 64 + 4096, name)
+			ElseIf "8A7ED5" = Pixel(2) Then
+				a = MsgBox("粉狼，已暂停脚本。" & vbcr & "点确认自动打。", 64 + 4096, name)
+			Else 
+				a = MsgBox("蓝狼，已暂停脚本。" & vbcr & "点确认自动打。", 64 + 4096, name)
+			End If
+			Delay 300
+		End If
+		If Form1.CheckBox2.Value = 1 Then //延迟x秒
+			Delay (Form1.InputBox8.Text + 0) * 1000
+		End If
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, RPWolf + DisY)
+		Delay 300
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1101 + DisX, RPWolf + DisY)
+		Delay 1000
+		IsBox = Plugin.Bkgnd.GetPixelColor(Hwnd01, 623 + DisX + PotX, 365 + DisY + PotY)
+		If IsBox = "622000" or IsBox = "580010" Then 
+			Jump = ""
+			Goto Start2//卡满或战斗CD
+		End If 
+		count = 0 : Jump = ""
+		Do Until Jump = "DBD5E7" or Jump = "DCD5E7" or Jump = "FFFDEC"//跳过战斗
+			Delay 500
+			Jump = Plugin.Bkgnd.GetPixelColor(Hwnd01, 1106 + DisX + PotX, 527 + DisY + PotY)
+			count = count + 1
+			If count > 10 Then 
+				Exit Do 
+			End If
+		Loop
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1106 + DisX, 527 + DisY)
+		count = 0 : Jump = ""
+		Do Until Jump = "4C2403" or Jump = "55371E"//结束战斗
+			Jump = Plugin.Bkgnd.GetPixelColor(Hwnd01, 20 + DisX + PotX, 350 + DisY + PotY)
+			Delay 1000
+			count = count + 1
+			If count > 4 Then 
+				Exit Do 
+			End If
+		Loop
+		Rem EndHit1
+		If Jump = "4C2403" Then //战斗胜利
+			For 5
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 500 + DisX, 255 + DisY)
+				Delay 200
+			Next
+			Goto Start
+		ElseIf (wolfremind = 0 or wolfremind = 2) and Jump = "55371E" Then//失败，不持续打
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 360 + DisX, 60 + DisY)
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 832 + DisX, 79 + DisY)
+			Delay 700
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+			Delay 700
+			Goto Start
+		ElseIf Jump = "55371E" Then//失败，持续打
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 360 + DisX, 60 + DisY)
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 832 + DisX, 79 + DisY)
+			Delay 700
+			Goto Start
+		Else 
+			Goto Start2
+		End If
+		
+	//判断遇到的是不是暴走
+	ElseIf Pixel(5) = "FFFFFF" and Pixel(6) = "FFFFFF" and Pixel(7) = "FFFFFF" and ("FFF50D" = Pixel(3) or"FFFC00" = Pixel(3)) and Pixel(11) = "FFFFFF" and Pixel(12) = "FFFFFF" Then
+		Call Plugin.Media.Play(Path1)
+		Form1.Label19.Caption = "感染者暴走嘞！"
+		Delay 200
+		If baozouremind = 2 Then 
+			a = MsgBox ("发现暴走，已暂停脚本，" & vbcr & "点确认后，会自动打。", 64 + 4096, name)
+		End If
+		If Form1.CheckBox2.Value = 1 Then //延迟x秒
+			Delay (Form1.InputBox8.Text + 0) * 1000
+		End If
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, baozoucard + DisY)
+		Delay 300
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1101 + DisX, baozoucard + DisY)
+		Delay 1000
+		IsBox = Plugin.Bkgnd.GetPixelColor(Hwnd01, 623 + DisX + PotX, 365 + DisY + PotY)
+		If IsBox = "622000" or IsBox = "580010" Then 
+			Jump = ""
+			Goto Start2//卡满或战斗CD
+		End If 
+		count = 0 : Jump = ""
+		Do Until Jump = "DBD5E7" or Jump = "DCD5E7" or Jump = "FFFDEC"//跳过战斗
+			Delay 500
+			Jump = Plugin.Bkgnd.GetPixelColor(Hwnd01, 1106 + DisX + PotX, 527 + DisY + PotY)
+			count = count + 1
+			If count > 10 Then 
+				Exit Do 
+			End If
+		Loop
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1106 + DisX, 527 + DisY)
+		count = 0 : Jump = ""
+		Do Until Jump = "4C2403" or Jump = "55371E"//结束战斗
+			Jump = Plugin.Bkgnd.GetPixelColor(Hwnd01, 20 + DisX + PotX, 350 + DisY + PotY)
+			Delay 1000
+			count = count + 1
+			If count > 4 Then 
+				Exit Do 
+			End If
+		Loop
+		Rem EndHit2
+		If Jump = "4C2403" Then //战斗胜利
+			For 5
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 500 + DisX, 255 + DisY)
+				Delay 200
+			Next
+			Goto Start
+		ElseIf (baozouremind = 2 or baozouremind = 0) and Jump = "55371E" Then//失败，不持续打
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 360 + DisX, 60 + DisY)
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 832 + DisX, 79 + DisY)
+			Delay 700
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+			Delay 700
+			Goto Start
+		ElseIf Jump = "55371E" Then//失败，持续打
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 360 + DisX, 60 + DisY)
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 832 + DisX, 79 + DisY)
+			Delay 700
+			Goto Start
+		Else 
+			Goto Start2
+		End If
+		
+	//普通感染者
+	ElseIf "FFF50D" = Pixel(3) or "FFFC00" = Pixel(3) Then
+		Form1.Label19.Caption = "正在打感染者-" & GR
+		GR = GR + 1
+		If GR = 9999 Then 
+			GR = 0
+		End If
+		If AutoClaim >= 15 and Form1.ComboBox2.ListIndex = 0 and Form1.ComboBox1.ListIndex <> 1 Then 
+			AutoClaim = 0
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 706 + DisX, 572 + DisY)
+			count = 0 : Jump = ""
+			Do Until Jump = "EEEEEE"
+				Delay 1000
+				Jump = Plugin.Bkgnd.GetPixelColor(Hwnd01, 773 + DisX + PotX, 70 + DisY + PotY)
+				count = count + 1
+				If count > 2 Then 
+					Exit Do 
+				End If
+			Loop
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 675 + DisX, 510 + DisY)
+			count = 0 : Jump = ""
+			Do Until Jump = "532203"
+				Delay 1000
+				Jump = Plugin.Bkgnd.GetPixelColor(Hwnd01, 622 + DisX + PotX, 471 + DisY + PotY)
+				count = count + 1
+				If count > 2 Then 
+					Exit Do 
+				End If
+			Loop
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 571 + DisX, 468 + DisY)
+			Delay 1000
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 825 + DisX, 80 + DisY)
+			Delay 1000
+		End If
+		If Form1.CheckBox2.Value = 1 Then //延迟x秒
+			Delay (Form1.InputBox8.Text + 0) * 1000
+		End If
+		AutoClaim = AutoClaim + 1
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, UseCard + DisY)
+		Delay 300
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1101 + DisX, UseCard + DisY)
+		Delay 1000
+		IsBox = Plugin.Bkgnd.GetPixelColor(Hwnd01, 623 + DisX + PotX, 365 + DisY + PotY)
+		If IsBox = "622000" or IsBox = "580010" Then 
+			Jump = ""
+			Goto Start2//卡满或战斗CD
+		End If 
+		count = 0 : Jump = ""
+		Do Until Jump = "DBD5E7" or Jump = "DCD5E7" or Jump = "FFFDEC" or "807F76" = Jump or "FFFFD8" = Jump//跳过战斗
+			Delay 500
+			Jump = Plugin.Bkgnd.GetPixelColor(Hwnd01, 1106 + DisX + PotX, 527 + DisY + PotY)
+			count = count + 1
+			If count > 10 Then 
+				Exit Do 
+			End If
+		Loop
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1106 + DisX, 527 + DisY)
+		count = 0 : Jump = ""
+		Do Until Jump = "4C2403" or Jump = "55371E"//结束战斗
+			Jump = Plugin.Bkgnd.GetPixelColor(Hwnd01, 20 + DisX + PotX, 350 + DisY + PotY)
+			Delay 500
+			count = count + 1
+			If count > 4 Then 
+				Exit Do 
+			End If
+		Loop
+		Rem EndHit3
+		If Jump = "4C2403" Then //战斗胜利
+			For 5
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 500 + DisX, 255 + DisY)
+				Delay 200
+			Next
+			Goto Start
+		ElseIf Contnus = 0 and Jump = "55371E" Then//失败，不持续打
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 360 + DisX, 60 + DisY)
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 832 + DisX, 79 + DisY)
+			Delay 700
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+			Delay 700
+			Goto Start
+		ElseIf Jump = "55371E" Then//失败，持续打
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 360 + DisX, 60 + DisY)
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 832 + DisX, 79 + DisY)
+			Delay 700
+			Goto Start
+		Else 
+			Goto Start2
+		End If
+		
+	//升级，出现点数分配[304,86]
+	ElseIf "EEEEEE" = Pixel(19) Then
+		Form1.Label19.Caption = "升级了，正在分配属性点"
+		If LevelUp = 0 Then 
+			MsgBox "您选择了升级提醒，请手动分配您的属性点", 64 + 4096, "Level Up"
+			Goto Start
+		ElseIf LevelUp = 1 Then
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1008 + DisX, 80 + DisY)
+			Goto Start
+		ElseIf LevelUp = 2 Then
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 930 + DisX, 300 + DisY)
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 640 + DisX, 500 + DisY)
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1008 + DisX, 80 + DisY)
+			Goto Start
+		ElseIf LevelUp = 3 Then
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 930 + DisX, 410 + DisY)
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 640 + DisX, 500 + DisY)
+			Delay 300	
+			Goto Start
+		End If
+		
+	//出现新卡[162,78]
+	ElseIf "C08B01" = Pixel(21) Then
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 720 + DisX, 545 + DisY)
+		Goto Start
+		
+	//自动吃药>
+	ElseIf "181389" = Pixel(18) Then //[378,506]
+		Form1.Label19.Caption = "正在自动吃药"
+		If TakeOrNot = 0 Then 
+			If Pixel(23) = "D7FE2A" Then 
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				a = MsgBox("不补充任何药水，AP已用完。" & vbcr & "脚本将终止运行。", 64 + 4096, name)
+				Form1.Label19.Caption = "--------跑图器已停止运行--------"
+				EndScript 
+			Else 
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				BCRcvLmt = 1
+				Form1.InputBox2.Text = "1"
+				a = MsgBox ("不补充任何药水，BC已用完。" & vbcr & "将放弃感染，继续跑图。"& vbcr & "否则，请手动终止脚本。", 64 + 4096, name)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+				Delay 1000
+				Goto Start
+			End If
+		ElseIf TakeOrNot = 1 Then
+			If Pixel(24) = "F7FFFF" Or Pixel(24) = "EDFFFF" Then 
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 753 + DisX, 506 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				Goto Start
+			ElseIf Pixel(23) = "D7FE2A" Then 
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				a = MsgBox("免费AP已用完。" & vbcr & "脚本将终止运行。", 64 + 4096, name)
+				Form1.Label19.Caption = "--------跑图器已停止运行--------"
+				EndScript 
+			Else 
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				BCRcvLmt = 1
+				Form1.InputBox2.Text = "1"
+				a = MsgBox ("免费BC已用完。" & vbcr & "将放弃感染，继续跑图。"& vbcr & "否则，请手动终止脚本。", 64 + 4096, name)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+				Delay 1000
+				Goto Start
+			End If
+			
+		ElseIf TakeOrNot = 2 Then
+		//只吃小蓝药水
+			If Pixel(24) = "F7FFFF" Or Pixel(24) = "EDFFFF" Then 
+			//有免费次数
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 753 + DisX, 506 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				Goto Start
+			ElseIf Pixel(23) = "D7FE2A" Then
+			//否则无免费次数，药剂补充界面药水颜色为蓝
+				If Pixel(26) = "FFFFE8" or Pixel(26) = "FFFFFF" Then 
+				//有小蓝药水
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 874 + DisX, 420 + DisY)
+					Delay 1000
+					IsBox = Plugin.Bkgnd.GetPixelColor(Hwnd01, 557 + DisX + PotX, 357 + DisY + PotY)
+					If "7E5E1E" = Isbox Or "C37D19" = Isbox Then 
+					//是否已经5次小蓝都用掉，是则关掉界面
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 557 + DisX, 357 + DisY)
+						Delay 1000
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+						Delay 1000
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+						Delay 300
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+						Delay 300
+						a = MsgBox("AP免费2次+小蓝药用完。" & vbcr & "脚本将终止运行。", 64 + 4096, name)
+						Form1.Label19.Caption = "--------跑图器已停止运行--------"
+						EndScript 
+					Else 
+					//否则已经吃过小蓝，直接关界面
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+						Delay 1000
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+						Delay 300
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+						Delay 300
+						Goto Start
+					End If 
+				Else 
+				//没有小蓝药水
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+					Delay 1000
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+					Delay 300
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+					Delay 300
+					a = MsgBox("AP小蓝药没有了。" & vbcr & "脚本将终止运行。", 64 + 4096, name)
+					Form1.Label19.Caption = "--------跑图器已停止运行--------"
+					EndScript
+				End If
+			Else 
+			//药剂补充界面药水颜色为红
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				BCRcvLmt = 1
+				Form1.InputBox2.Text = "1"
+				a = MsgBox ("BC已经用完。" & vbcr & "将放弃感染，并继续跑图。", 64 + 4096, name)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+				Delay 1000
+				Goto Start
+			End If
+			
+		ElseIf TakeOrNot = 3 Then
+		//只吃小红药水
+			If Pixel(24) = "F7FFFF" Or Pixel(24) = "EDFFFF" Then 
+			//有免费次数
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 753 + DisX, 506 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				Goto Start
+			ElseIf Pixel(23) = "7BA1FE" Then
+			//否则无免费次数，药剂补充界面药水颜色为红
+				If Pixel(26) = "FFFFE8" or Pixel(26) = "FFFFFF" Then 
+				//有小红药水
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 874 + DisX, 420 + DisY)
+					Delay 1000
+					Isbox = Plugin.Bkgnd.GetPixelColor(Hwnd01, 557 + DisX+PotX, 357 + DisY+PotY)
+					If "7E5E1E" = Isbox Or "C37D19" = Isbox Then 
+					//是否已经5次小红都用掉，是则关掉界面
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 557 + DisX, 357 + DisY)
+						Delay 1000
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+						Delay 1000
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+						Delay 300
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+						Delay 300
+						BCRcvLmt = 1
+						Form1.InputBox2.Text = "1"
+						a = MsgBox ("BC免费2次+小红药用完。" & vbcr & "将放弃感染，并继续跑图。", 64 + 4096, name)
+						Delay 1000
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+						Delay 1000
+						Goto Start
+ 					Else 
+					//否则关界面
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+						Delay 1000
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+						Delay 300
+						Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+						Delay 300
+						Goto Start
+					End If 
+				Else 
+				//没有小红药水
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+					Delay 1000
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+					Delay 300
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+					Delay 300
+					BCRcvLmt = 1
+					Form1.InputBox2.Text = "1"
+					a = MsgBox ("BC小红药没有了。" & vbcr & "将放弃感染，并继续跑图。"& vbcr & "否则，请手动终止脚本。", 64 + 4096, name)
+					Delay 700
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+					Delay 1000
+					Goto Start
+				End If
+			Else 
+			//药剂补充界面药水颜色为蓝
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				a = MsgBox("AP已经用完。" & vbcr & "脚本将终止运行。", 64 + 4096, name)
+				Form1.Label19.Caption = "--------跑图器已停止运行--------"
+				EndScript 
+			End If
+			
+		ElseIf TakeOrNot = 4 Then
+		//先吃吃小蓝，后吃大蓝
+			If Pixel(24) = "F7FFFF" Or Pixel(24) = "EDFFFF" Then 
+			//有免费次数
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 753 + DisX, 506 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				Goto Start
+			ElseIf Pixel(23) = "7BA1FE" Then
+			//如果药水补充界面为红药
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				BCRcvLmt = 1
+				Form1.InputBox2.Text = "1"
+				a = MsgBox ("BC已经用完。" & vbcr & "将放弃感染，并继续跑图。", 64 + 4096, name)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+				Delay 1000
+				Goto Start
+			ElseIf Pixel(26) = "FFFFE8" and SmallBlue = 1 or Pixel(26) = "FFFFFF" and SmallBlue = 1 Then
+			//为蓝药水，且小蓝药水还有，且没用完5次(不符合任一条件均转向下一分支，大蓝)
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 874 + DisX, 420 + DisY)
+				Delay 1000
+				Isbox = Plugin.Bkgnd.GetPixelColor(Hwnd01, 557 + DisX+PotX, 357 + DisY+PotY)
+				If "7E5E1E" = Isbox Or "C37D19" = Isbox Then 
+				//小蓝用够5次，改变条件开关。
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 557 + DisX, 357 + DisY)
+					Delay 1000
+					SmallBlue = 0
+				End If
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				Goto Start
+			ElseIf not (TimesLeft = 0)  and not (Pixel(25) = "7C7672")  Then
+			//用户自定义使用大药水个数剩余不为0。
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 874 + DisX, 310 + DisY)
+				TimesLeft = TimesLeft - 1
+				Form1.InputBox5.Text = cStr(TimesLeft)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				Goto Start
+			Else 
+			//大蓝药水用完或者用户给定的次数用完。
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				a = MsgBox ("AP指定个数的大蓝药用完。" & vbcr & vbcr & "脚本将终止运行。"& vbcr &vbcr &"使用大药个数将归零，以免不必要的浪费。", 64 + 4096, name)
+				Form1.InputBox5.Text = "0"
+				Form1.Label19.Caption = "--------跑图器已停止运行--------"
+				EndScript
+			End If 
+			
+		ElseIf TakeOrNot = 5 Then
+		//先吃吃小红，后吃大红
+			If Pixel(24) = "F7FFFF" Or Pixel(24) = "EDFFFF" Then 
+			//有免费次数
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 753 + DisX, 506 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				Goto Start
+			ElseIf Pixel(23) = "D7FE2A" Then
+			//如果药水补充界面为蓝药
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				a = MsgBox ("AP已经用完。" & vbcr & "脚本将终止。", 64 + 4096, name)
+				Delay 1000
+				Form1.Label19.Caption = "--------跑图器已停止运行--------"
+				EndScript 
+			ElseIf Pixel(26) = "FFFFE8" and SmallRed = 1 or Pixel(26) = "FFFFFF" and SmallRed = 1 Then
+			//为红药水，且小红药水还有，且没用完5次(不符合任一条件均转向下一分支，大红)
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 874 + DisX, 420 + DisY)
+				Delay 1000
+				Isbox = Plugin.Bkgnd.GetPixelColor(Hwnd01, 557 + DisX+PotX, 357 + DisY+PotY)
+				If "7E5E1E" = Isbox Or "C37D19" = Isbox Then 
+				//小红用完5次，改变条件开关。
+					Call Plugin.Bkgnd.LeftClick(Hwnd01, 557 + DisX, 357 + DisY)
+					Delay 1000
+					SmallRed = 0
+				End If
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				Goto Start
+			ElseIf not (TimesLeft = 0)  and not (Pixel(25) = "7C7672")  Then
+			//用户自定义使用大药水个数剩余不为0。
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 874 + DisX, 310 + DisY)
+				TimesLeft = TimesLeft - 1
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				Goto Start
+			Else 
+			//大红药水用完或者用户给定的次数用完。
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 969 + DisX, 195 + DisY)
+				Delay 1000
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 970 + DisX, 196 + DisY)
+				Delay 300
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 968 + DisX, 194 + DisY)
+				Delay 300
+				BCRcvLmt = 1
+				Form1.InputBox2.Text = "1"
+				a = MsgBox("BC指定个数的大红药用完。" & vbcr & vbcr & "将放弃感染，继续跑图。" & vbcr & "否则，请手动终止脚本。" & vbcr & vbcr & "以防浪费，大药使用个数将归零。", 64 + 4096, name)
+				Form1.InputBox5.Text = "0"
+				Delay 700
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+				Delay 1000
+				Goto Start
+			End If
+		End If 
+		
+	//在探索界面自动进入新的地图
+	ElseIf "C88A21" = Pixel(18) Then
+		Form1.Label19.Caption = "跑图已经通关"
+		If NextDistrict = 0 Then 
+			Delay 2000
+			Goto Start
+		ElseIf NextDistrict = 1 Then
+		//返回、活动、滚动条上翻*2、进活动图的区域*2、(滚动条上翻)、进图
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1064 + DisX, 498 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 908 + DisX, 30 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1103 + DisX, 65 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1103 + DisX, 65 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 974 + DisX, 75 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 974 + DisX, 75 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1103 + DisX, 65 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 974 + DisX, 75 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 974 + DisX, 75 + DisY)
+			Delay 200
+			Goto Start
+		ElseIf NextDistrict = 2 Then
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1064 + DisX, 498 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 984 + DisX, 30 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1103 + DisX, 65 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1103 + DisX, 65 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 974 + DisX, 75 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 974 + DisX, 75 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1103 + DisX, 65 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 974 + DisX, 75 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 974 + DisX, 75 + DisY)
+			Delay 200
+			Goto Start
+		End If
+		
+	//拾取掉落奖励
+	ElseIf Pixel(4) = "4E1C01" or Pixel(4) = "9C5008" or Pixel(2) = "C14203" Then
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 570 + DisX, 470 + DisY)
+		Goto Start
+		
+	//卡牌满仓	
+	ElseIf Pixel(27) = "3E3E3E" and Pixel(28) = "3E3E3E" and Pixel(29) = "3E3E3E" and Pixel(30) = "3E3E3E" and Pixel(40) = "622000" or Pixel(27) = "FFFFFF" and Pixel(28) = "FFFFFF" and Pixel(29) = "FFFFFF" and Pixel(30) = "FFFFFF"and Pixel(40) = "622000" Then
+		Form1.Label19.Caption = "处理卡牌满仓"
+		If "807B06" = Plugin.Bkgnd.GetPixelColor(Hwnd01, 88 + DisX+PotX, 247 + DisY+PotY) Then 
+			strenth = 930
+		Else 
+			strenth = 855
+		End If
+		If FullCard = 0 Then 
+			a = MsgBox ("卡牌满了，请手动处理。", 64 + 4096, name)
+			Delay 2000
+			Goto Start
+		ElseIf FullCard = 1 or FullCard = 2 Then
+			Form1.Label19.Caption = "正在自动喂卡"
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 557 + DisX, 357 + DisY)//关掉满卡提示
+			Confirm = "" : count = 0
+			Do Until Confirm = "FBFFFF"
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, strenth + DisX, 573 + DisY)//强化
+				Delay 1000
+				Confirm = Plugin.Bkgnd.GetPixelColor(Hwnd01, 15 + DisX + PotX, 5 + DisY + PotY)
+				count = count + 1
+				If count > 4 Then 
+					Goto Start
+					Exit Do
+				End If
+			Loop
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 527 + DisX, 182 + DisY)//选择副卡
+			Confirm = ""
+			Do Until Confirm = "8C4F12"
+				Delay 1000
+				Confirm = Plugin.Bkgnd.GetPixelColor(Hwnd01, 188 + DisX + PotX, 188 + DisY + PotY)
+			Loop
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1000 + DisX, 360 + DisY)//全选1星
+			Delay 500
+			Confirm = "401602"//确认打钩
+			Do Until Confirm <> "401602"
+				Delay 500
+				Confirm = Plugin.Bkgnd.GetPixelColor(Hwnd01, 1000 + DisX + PotX, 360 + DisY + PotY)
+			Loop
+			If FullCard = 2 Then
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 1000 + DisX, 390 + DisY)//全选2星
+				Delay 500
+				Confirm = "401602"//确认打钩
+				Do Until Confirm <> "401602"
+					Delay 500
+					Confirm = Plugin.Bkgnd.GetPixelColor(Hwnd01, 1000 + DisX + PotX, 360 + DisY + PotY)
+				Loop
+			End If 
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1050 + DisX, 160 + DisY)//确定选卡
+			Confirm = ""
+			Do Until Confirm = "7D5D11"
+				Delay 1000
+				Confirm = Plugin.Bkgnd.GetPixelColor(Hwnd01, 539 + DisX + PotX, 400 + DisY + PotY)
+			Loop
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1050 + DisX, 160 + DisY)//强化
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 888 + DisX, 100 + DisY)//点击屏幕、跳过
+			Delay 250
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 888 + DisX, 100 + DisY)
+			Delay 250
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 888 + DisX, 100 + DisY)
+			Delay 250
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 888 + DisX, 100 + DisY)
+			Delay 250
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 888 + DisX, 100 + DisY)
+			Delay 250
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 888 + DisX, 100 + DisY)
+			Delay 250
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1115 + DisX, 15 + DisY)//关闭强化
+			Delay 1000
+			Goto Start
+		ElseIf FullCard = 3 or FullCard = 4 Then
+			Form1.Label19.Caption = "正在自动卖卡"
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 557 + DisX, 357 + DisY)//关掉满卡提示
+			Confirm = "" : count = 0
+			Do Until Confirm = "FBFFFF"
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, strenth + DisX, 573 + DisY)//强化
+				Delay 1000
+				Confirm = Plugin.Bkgnd.GetPixelColor(Hwnd01, 15 + DisX + PotX, 5 + DisY + PotY)
+				count = count + 1
+				If count > 4 Then 
+					Goto Start
+					Exit Do
+				End If
+			Loop
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 550 + DisX, 50 + DisY)//出售
+			Delay 500
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 500 + DisX, 180 + DisY)//选择副卡
+			Confirm = ""
+			Do Until Confirm = "84470A"
+				Delay 1000
+				Confirm = Plugin.Bkgnd.GetPixelColor(Hwnd01, 181 + DisX + PotX, 181 + DisY + PotY)
+			Loop
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1000 + DisX, 360 + DisY)//全选1星
+			Delay 500
+			If FullCard = 4 Then 
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, 1000 + DisX, 390 + DisY)//全选2星
+				Delay 500
+			End If
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1050 + DisX, 160 + DisY)//确定选卡
+			Confirm = ""
+			Do Until Confirm = "855500"
+				Delay 1000
+				Confirm = Plugin.Bkgnd.GetPixelColor(Hwnd01, 513 + DisX + PotX, 513 + DisY + PotY)
+			Loop
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1050 + DisX, 160 + DisY)//出售
+			Delay 900
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 570 + DisX, 470 + DisY)//领取金币
+			Delay 700
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1115 + DisX, 15 + DisY)//关闭强化
+			Delay 700
+			Goto Start
+		ElseIf FullCard = 5 Then
+		//实验室分解卡牌
+			Form1.Label19.Caption = "正在分解卡牌"
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 557 + DisX, 357 + DisY)//关掉满卡提示
+			Confirm = "" : count = 0
+			Do Until Confirm = "FBFFFF"
+				Call Plugin.Bkgnd.LeftClick(Hwnd01, strenth + DisX, 573 + DisY)//强化
+				Delay 1000
+				Confirm = Plugin.Bkgnd.GetPixelColor(Hwnd01, 15 + DisX + PotX, 5 + DisY + PotY)
+				count = count + 1
+				If count > 4 Then 
+					Goto Start
+					Exit Do 
+				End If
+			Loop
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 400 + DisX, 50 + DisY)//实验室
+			Delay 1000
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 270 + DisX, 209 + DisY)//选择副卡
+			Confirm = ""
+			Do Until Confirm = "84470A"
+				Delay 1000
+				Confirm = Plugin.Bkgnd.GetPixelColor(Hwnd01, 181 + DisX + PotX, 181 + DisY + PotY)
+			Loop
+			Delay 200
+			//星级由低到高排序
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 958 + DisX, 44 + DisY)
+			Delay 200
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 958 + DisX, 44 + DisY)
+			Delay 400
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 963 + DisX, 179 + DisY)
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 939 + DisX, 151 + DisY)
+			Delay 300
+			Call Choose(disX,disY)
+			Delay 300
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1050 + DisX, 150 + DisY)
+			Delay 1000
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1042 + DisX, 192 + DisY)
+			Delay 1000
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 570 + DisX, 470 + DisY)//领取金币
+			Delay 700
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1115 + DisX, 15 + DisY)//关闭强化
+			Delay 700
+			Goto Start
+		End If
+		
+	//出现弹出窗口（感染者被消灭、[体力满、领导力满]、战斗匹配冷却中、[卡牌满]）
+	ElseIf "7E5E1E" = Pixel(4) Or "C37D19" = Pixel(4) /*以下日服*/ or "997859" = Pixel(4) Or "CF9747" = Pixel(4) or/*日服吃药*/ "592406"=pixel(4)/*以下美服*/ or "A16200" = Pixel(4) Or "BF7409" = Pixel(4) Then
+		If Pixel(31) = "FFFFFF" and Pixel(32) = "FFFFFF" and Pixel(33) = "FFFFFF" and Pixel(34) = "FFFFFF" or Pixel(31) = "3E3E3E" and Pixel(32) = "3E3E3E" and Pixel(33) = "3E3E3E" and Pixel(34) = "3E3E3E" Then 
+		//战斗冷却
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 557 + DisX, 357 + DisY)
+			Delay 700
+			Goto Start
+		ElseIf Pixel(35) = "FFFFFF" and Pixel(36) = "FFFFFF" and Pixel(37) = "FFFFFF" and Pixel(38) = "FFFFFF" or Pixel(35) = "3E3E3E" and Pixel(36) = "3E3E3E" and Pixel(37) = "3E3E3E" and Pixel(38) = "3E3E3E"
+		//被消灭
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 557 + DisX, 357 + DisY)
+			Delay 700
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+			Delay 700
+			Goto Start
+		ElseIf "997859" = Pixel(4) Or "CF9747" = Pixel(4) Then//日服被消灭
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 557 + DisX, 357 + DisY)
+			Delay 700
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+			Delay 700
+			Goto Start
+		ElseIf "592406" = Pixel(4) and TakeOrNot > 0 Then//日服吃药
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 503 + DisX, 357 + DisY)
+			Delay 700
+			Goto Start
+		ElseIf "A16200" = Pixel(4) Or "BF7409" = Pixel(4) Then//美服被消灭
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 557 + DisX, 357 + DisY)
+			Delay 700
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 1102 + DisX, 476 + DisY)
+			Delay 700
+			Goto Start	
+		Else 
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, 557 + DisX, 357 + DisY)
+			Delay 700
+			Goto Start
+		End If
+		
+	ElseIf Pixel(41) = "FFF2FB" or Pixel(41) = "FBF3FB" Then//选卡界面orJJC界面自动关
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1050 + DisX, 160 + DisY)
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 1115 + DisX, 15 + DisY)
+		Delay 1000
+		Goto Start
+		
+	Else 
+		Form1.Label19.Caption = "循环空白延时-"& YC
+		YC = YC + 1
+		If YC = 9999 Then 
+			YC = 0
+		End If
+		Delay Form1.InputBox9.Text+0//处于其他界面自动点会出现别人放感染的区域，达到抢感染效果。或者不抢感染，点空白。
+		Call Plugin.Bkgnd.LeftClick(Hwnd01, 333 + DisX, Qiang + DisY)
+		temp = temp +1
+		Goto Start
+	End If 
+
+End Sub
+
+Function chnMD5(intX, intY)
+	PosX=0:PosY=0
+	Colors = Plugin.BKeast.MutiGetC(Hwnd01, intX+PosX, intY+PosY, "48-11")
+	Dim Parts
+	Parts = Split(Colors, "|")
+	For i = 0 To UBound(Parts)
+		If Parts(i) = "FFFFFF" Then 
+			Parts(i) = 1
+		Else 
+			Parts(i) = 0
+		End If
+	Next
+	str01 = Join(Parts, "")
+	TextMD5 = Plugin.Encrypt.Md5String(str01)
+	chnMD5 = Mid(TextMD5, 1, 8)
+End Function 
+Function remMD5(intX, intY)
+	PosX=0:PosY=0
+	Colors = Plugin.BKeast.MutiGetC(Hwnd01, intX+PosX, intY+PosY, "48-2")
+	Colors = Colors & Plugin.BKeast.MutiGetC(Hwnd01, intX+PosX, intY+PosY + 21, "96-9")
+	Dim Parts
+	Parts = Split(Colors, "|")
+	For i = 0 To UBound(Parts)
+		If Parts(i) = "FFFFFF" Then 
+			Parts(i) = 1
+		Else 
+			Parts(i) = 0
+		End If
+	Next
+	str01 = Join(Parts, "")
+	TextMD5 = Plugin.Encrypt.Md5String(str01)
+	remMD5 = Mid(TextMD5, 1, 8)
+End Function 
+Function FindWolf(intX, intY)
+	PosX=0:PosY=0
+	Colors1 = Plugin.BKeast.MutiGetC(Hwnd01, intX+PosX, intY+PosY, "6-5")			//红粉
+	Colors2 = Plugin.BKeast.MutiGetC(Hwnd01, intX+PosX-24, intY+PosY, "6-5")	//蓝
+	Dim Parts1,Parts2
+	Parts1 = Split(Colors1, "|")
+	Parts2 = Split(Colors2, "|")
+	For i = 0 To UBound(Parts1)
+		If Parts1(i) = "FFFFFF" Then 
+			Parts1(i) = 1
+		Else 
+			Parts1(i) = 0
+		End If
+	Next
+	For i = 0 To UBound(Parts2)
+		If Parts2(i) = "FFFFFF" Then 
+			Parts2(i) = 1
+		Else 
+			Parts2(i) = 0
+		End If
+	Next
+	str01 = Join(Parts1, "")
+	str02 = Join(Parts2, "")
+	str00 = "111111100000111111100000111111"
+	If InStr(str01,str00) = 1 Then 
+		FindWolf = 1
+	ElseIf InStr(str02,str00) = 1  Then
+		FindWolf = 2
+	Else 
+		FindWolf = 0
+	End If
+End Function 
+Sub Choose(disX,disY)
+	Dim Parts
+	click = 0
+	Dim ClickX(5), ClickY(5)
+	ClickX(0) = 444 + disX : ClickX(1) = 666 + disX : ClickX(2) = 777 + disX : ClickX(3) = 444 + disX : ClickX(4) = 666 + disX : ClickX(5) = 777 + disX
+	ClickY(0) = 222 + disY : ClickY(1) = 222 + disY : ClickY(2) = 222 + disY : ClickY(3) = 444 + disY : ClickY(4) = 444 + disY : ClickY(5) = 444 + disY
+	
+	Rem Mark
+	For i = 0 To 5
+		If click >= 12 Then 
+			Exit Sub
+		Else
+			Call Plugin.Bkgnd.LeftClick(Hwnd01, ClickX(i), ClickY(i))
+			click = click + 1
+			Delay 200
+		End If 
+	Next
+	Call Plugin.Bkgnd.LeftClick(Hwnd01, 939 + disX, 310 + disY)
+	Delay 700
+	Goto Mark
+End Sub
+If Form1.CheckBox1.Value = 0 Then 
+	PID = BeginThread(Thread)
+	Delay 300
+	Call Plugin.File.WriteINI("ThreadID", "Hwnd01", Cstr(PID), ".\Temp.ini")
+Else 
+	Call WriteInINI
+End If
+
+//定义控制事件
+Event Form1.ComboBox5.SelectChange
+	TakeOrNot = Form1.ComboBox5.ListIndex
+	If Form1.ComboBox5.ListIndex < 4 Then 
+		Form1.Label5.Visible = False
+		Form1.InputBox5.Visible = False
+	Else
+		Form1.Label5.Visible = True
+		Form1.InputBox5.Visible = True
+	End If
+End Event
+Event Form1.ComboBox9.SelectChange
+	FullCard = Form1.ComboBox9.ListIndex
+	If Form1.ComboBox9.ListIndex = 1 or Form1.ComboBox9.ListIndex = 2 Then 
+		Form1.ComboBox9.TextColor = "0000FF"
+	Else
+		Form1.ComboBox9.TextColor = "000000"
+	End If 
+End Event
+Event Form1.ComboBox1.SelectChange
+	Qiang = Index1(Form1.ComboBox1.ListIndex)
+End Event
+Event Form1.Button6.Click
+	a = MsgBox ("把游戏窗口改名为“"&Form1.InputBox7.Text&"”", 4096, "使用提醒")
+	HwndP= Hwnd01
+	Rem FindP4
+	HwndPP = HwndP
+	HwndP = Plugin.lxj_Plug.lxj_FindParentHwnd(HwndPP)
+	If not(HwndP = 0) Then 
+		Goto FindP4
+	End If
+	HwndPP01 = HwndPP
+	Call Plugin.Window.SetText(HwndPP01, Form1.InputBox7.Text)
+End Event
+
+Event Form1.Button1.Click
+	a = MsgBox("是否释放对窗口"&name&"的控制，"&vbcr&"转移到另一个坐标等价窗口？", 1 + 256 + 4096, "抓取句柄")
+	If a = 1 Then 
+		a = MsgBox("鼠标移到游戏里，" & vbcr & "键盘敲回车。", 4096, "抓取句柄")
+		Delay 200
+		Hwnd01 = Plugin.Window.MousePoint()
+		Call Plugin.Window.SetText(HwndPP01, "星纪元-已脱离跑图器控制")
+		HwndP= Hwnd01
+		Rem FindP3
+		HwndPP = HwndP
+		HwndP = Plugin.lxj_Plug.lxj_FindParentHwnd(HwndPP)
+		If not(HwndP = 0) Then 
+			Goto FindP3
+		End If
+		HwndPP01 = HwndPP
+		name = Form1.InputBox7.Text
+		Call Plugin.Window.SetText(HwndPP01, "星纪元-"&name)
+	End If
+End Event
+Event Form1.Button2.Click
+	Call Plugin.Window.Move(HwndPP01, Form1.InputBox3.Text + 0, Form1.InputBox4.Text + 0)
+End Event
+Event Form1.Button3.Click
+	HwndX = Plugin.Window.Find(0, "微风 - v8.8")
+	Delay 200
+	Call Plugin.Window.Top(HwndPP01, 0)
+	Delay 300
+	Call Plugin.Window.Top(HwndPP01, 1)
+	Delay 100
+	Call Plugin.Window.Top(HwndX, 0)
+	Delay 100
+	Call Plugin.Window.Top(HwndX, 1)
+End Event
+Event Form1.Button4.Click
+	Path = Plugin.lxj_Plug.lxj_Pathfile()
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "StringDelay", Form1.InputBox1.Text, Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "TimesLeft", Form1.InputBox5.Text, Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "Combo14", cStr(Form1.ComboBox14.ListIndex), Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "BCRcvLmt", Form1.InputBox2.Text, Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "Qiang", cStr(Form1.ComboBox1.ListIndex), Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "Contnus", cStr(Form1.ComboBox2.ListIndex), Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "UseCard", cStr(Form1.ComboBox3.ListIndex), Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "TakeOrNot", cStr(Form1.ComboBox5.ListIndex), Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "NextDistrict", cStr(Form1.ComboBox7.ListIndex), Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "LevelUp", cStr(Form1.ComboBox8.ListIndex), Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "FullCard", cStr(Form1.ComboBox9.ListIndex), Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "RPWolf", cStr(Form1.ComboBox10.ListIndex), Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "baozouremind", cStr(Form1.ComboBox12.ListIndex), Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "baozoucard", cStr(Form1.ComboBox13.ListIndex), Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "wolfremind", cStr(Form1.ComboBox4.ListIndex), Path & "Config.ini")
+	Call Plugin.File.WriteINI(Form1.InputBox6.Text, "NextArea", cStr(Form1.ComboBox6.ListIndex), Path & "Config.ini")
+	Form1.Label19.Caption = "设置"&Form1.InputBox6.Text&"已存入Config.ini"
+End Event
+Event Form1.Button5.Click
+	Path = Plugin.lxj_Plug.lxj_Pathfile()
+	Form1.InputBox1.Text = Plugin.File.ReadINI(Form1.InputBox6.Text, "StringDelay", Path & "Config.ini")
+	Form1.InputBox5.Text = Plugin.File.ReadINI(Form1.InputBox6.Text, "TimesLeft", Path & "Config.ini")
+	Form1.ComboBox14.ListIndex = Plugin.File.ReadINI(Form1.InputBox6.Text, "Combo14", Path & "Config.ini")+0
+	Form1.InputBox2.Text = Plugin.File.ReadINI(Form1.InputBox6.Text, "BCRcvLmt", Path & "Config.ini")
+	Form1.ComboBox1.ListIndex = Plugin.File.ReadINI(Form1.InputBox6.Text, "Qiang", Path & "Config.ini")+0
+	Form1.ComboBox2.ListIndex = Plugin.File.ReadINI(Form1.InputBox6.Text, "Contnus", Path & "Config.ini")+0
+	Form1.ComboBox3.ListIndex = Plugin.File.ReadINI(Form1.InputBox6.Text, "UseCard", Path & "Config.ini")+0
+	Form1.ComboBox5.ListIndex = Plugin.File.ReadINI(Form1.InputBox6.Text, "TakeOrNot", Path & "Config.ini")+0
+	Form1.ComboBox7.ListIndex = Plugin.File.ReadINI(Form1.InputBox6.Text, "NextDistrict", Path & "Config.ini")+0
+	Form1.ComboBox8.ListIndex = Plugin.File.ReadINI(Form1.InputBox6.Text, "LevelUp", Path & "Config.ini")+0
+	Form1.ComboBox9.ListIndex = Plugin.File.ReadINI(Form1.InputBox6.Text, "FullCard", Path & "Config.ini")+0
+	Form1.ComboBox10.ListIndex = Plugin.File.ReadINI(Form1.InputBox6.Text, "RPWolf", Path & "Config.ini")+0
+	Form1.ComboBox12.ListIndex = Plugin.File.ReadINI(Form1.InputBox6.Text, "baozouremind", Path & "Config.ini")+0
+	Form1.ComboBox13.ListIndex = Plugin.File.ReadINI(Form1.InputBox6.Text, "baozoucard", Path & "Config.ini")+0
+	Form1.ComboBox4.ListIndex = Plugin.File.ReadINI(Form1.InputBox6.Text, "wolfremind", Path & "Config.ini")+0
+	Form1.ComboBox6.ListIndex = Plugin.File.ReadINI(Form1.InputBox6.Text, "NextArea", Path & "Config.ini") + 0
+	Form1.Label19.Caption = "设置"&Form1.InputBox6.Text&"已从Config.ini读出"
+End Event
+
+Event Form1.Loadover
+	BeginThread close
+End Event
+Sub close()
+	Delay 1000
+	Hwnd = Plugin.Window.Find(0, "微风 - v8.8")
+	HwndEx2 = Plugin.Window.FindEx(Hwnd, 0, "Shell Embedding", 0)
+	HwndAd = Plugin.Window.Find("AfxFrameOrView100s", 0)
+	Delay 1000
+	call Plugin.lxj_Plug.lxj_CloseWindowEX (HwndEx2)
+	Call Plugin.lxj_Plug.lxj_CloseWindowEX(HwndAd)
+	Delay 1000
+	HwndEx1 = Plugin.lxj_Plug.lxj_FindChildHwnd(Hwnd, "精灵", "Static", 1, 1)
+	If HwndEx1 <> Hwnd Then 
+		Call Plugin.lxj_Plug.lxj_CloseWindowEX(HwndEx1)
+	End If
+End Sub
