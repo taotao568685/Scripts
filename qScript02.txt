@@ -1,0 +1,147 @@
+/*JJC single*/
+Call FullProcess
+Sub FullProcess
+a = MsgBox("起始界面：JJC或者主界面皆可。" & vbcr & "点确认后0.2秒，鼠标落在游戏界面上即可。", 64 + 4096, "使用提醒")
+Delay 300
+Hwnd2 = Plugin.Window.MousePoint()
+
+HwndTmp = Hwnd2
+Rem FindHwndEx
+HwndTmp2 = HwndTmp
+HwndTmp = Plugin.lxj_Plug.lxj_FindParentHwnd(HwndTmp2)
+If HwndTmp <> 0 Then 
+	Goto FindHwndEx
+End If
+Hwnd3 = HwndTmp2
+
+sRectEx = Plugin.Window.GetWindowRect(Hwnd2)
+sRectPr = Plugin.Window.GetWindowRect(Hwnd3)
+Dim RectPr
+RectPr = Split(sRectPr, "|")
+Dim RectEx
+RectEx = Split(sRectEx, "|")
+PosX = RectEx(0) - RectPr(0)
+PosY = RectEx(1) - RectPr(1)
+
+cRectEx = Plugin.Window.GetClientRect(Hwnd2)
+cRectPr = Plugin.Window.GetClientRect(Hwnd3)
+Dim RectPrc
+RectPrc = Split(cRectPr, "|")
+Dim RectExc
+RectExc = Split(cRectEx, "|")
+PotX = RectExc(0) - RectPrc(0)
+PotY = RectExc(1) - RectPrc(1)
+
+dXdY = Plugin.Bkgnd.FindColor(Hwnd2, 0, 0, 400, 400, "D8D320")
+ZB = InStr(dXdY, "|")
+dX = Clng(Left(dXdY, ZB - 1)) : dY = Clng(Right(dXdY, Len(dXdY) - ZB))
+If dX < 0  and dY < 0  Then 
+	dXdY = Plugin.Bkgnd.FindColor(Hwnd2, 0, 0, 400, 400, "FBF3FB")
+	ZB = InStr(dXdY, "|")
+	dX = Clng(Left(dXdY, ZB - 1)) : dY = Clng(Right(dXdY, Len(dXdY) - ZB))
+	If dX < 0  and dY < 0  Then 
+		DisX = 0 : DisY = 0
+		EndScript 
+	Else 
+		DisX = dX - 16  : DisY = dY - 3
+	End If 
+Else 
+	DisX = dX - 127  : DisY = dY - 81 
+	Delay 800
+	Call Plugin.Bkgnd.LeftClick(Hwnd2, 1092 + DisX, 432 + DisY)
+	Delay 2000
+	Call Plugin.Bkgnd.LeftClick(Hwnd2, 400 + DisX, 180 + DisY)
+	Delay 1500
+End If
+
+times = 0
+Delay 300
+
+Quit = "00FFFF|00FFFF|00FFFF|00FFFF|00FFFF|00FFFF|00FFFF|00FFFF|00FFFF|00FFFF|00FFFF"
+Quet = "00FFFF|0EBB66|0EBB66|0EFFFF|0EBB66|0EFFFF|0EBB66|0EBB66|0EFFFF|0EBB66|0EBB66"
+Pos = "369,245|1106,527|360,60|623,365|494,353|461,117|461,118|461,119|461,120|461,121|461,122|461,123|461,124|461,125|461,126|461,127"
+temp = 0
+Rem Start
+Delay 500
+
+	If temp > 6 Then 
+		ColorMsgbox = Plugin.BKeast.MutiGetC(Hwnd2, disX +  550, disY +  250, "1-200")
+		FindBox = InStr(ColorMsgbox, "F1DBC6")
+		If FindBox > 0 Then 
+			Call Plugin.Bkgnd.LeftClick(Hwnd2, 550 + DisX, (FindBox - 1) / 7 + 250 + DisY)
+		End If
+		temp = 0
+	End If
+
+Colours = Plugin.BKeast.MutiGetC(Hwnd2, disX , disY , Pos)
+Fight = Mid(Colours, 1, 6)
+Skip = Mid(Colours, 8, 6)
+/*Fin = Mid(Colours, 15, 6)*/
+Buzu = Mid(Colours, 22, 6)
+Buy = Mid(Colours, 29, 6)
+If Buy = "000000" Then 
+	Goto Start
+End If
+If Fight = "7A251D" or Fight = "715422" Then 
+	If Form1.OptionBox1.Value = 1 Then  
+		If Mid(Colours, 36, 76) = Quit or Mid(Colours, 36, 76) = Quet Then 
+			Call Plugin.Bkgnd.LeftClick(Hwnd2, 367 + DisX, 408 + DisY)
+			Delay 1200
+			Call Plugin.Bkgnd.LeftClick(Hwnd2, 575 + DisX, 503 + DisY)
+			Delay 1000
+			Call Plugin.Bkgnd.LeftClick(Hwnd2, 791 + DisX, 84 + DisY)
+			Delay 300
+			a = MsgBox("JJC已完成。", 64 + 4096, "自动竞技场")
+			EndScript
+		End If 
+	End If
+	Call Plugin.Bkgnd.LeftClick(Hwnd2, 369 + DisX, 245 + DisY)
+	Delay 500
+	Goto Start
+ElseIf Skip = "DBD5E7" or Skip = "DCD5E7" or Skip = "FFFDEC" or skip = "807F76"or skip = "FFFFD8" Then
+	Call Plugin.Bkgnd.LeftClick(Hwnd2, 1106 + DisX, 527 + DisY)
+	Goto Start
+/*ElseIf Fin = "454E2B" Then
+	Call Plugin.Bkgnd.LeftClick(Hwnd2, 360 + DisX, 60 + DisY)
+	Goto Start*/
+ElseIf Buzu = "622000" Then
+	If Buy = "C6BC8A" or Buy = "D5C3B1" Then 
+		Call Plugin.Bkgnd.LeftClick(Hwnd2, 626 + DisX, 350 + DisY)
+		Delay 1000
+		Call Plugin.Bkgnd.LeftClick(Hwnd2, 367 + DisX, 408 + DisY)
+		Delay 1200
+		Call Plugin.Bkgnd.LeftClick(Hwnd2, 575 + DisX, 503 + DisY)
+		Delay 1000
+		Call Plugin.Bkgnd.LeftClick(Hwnd2, 791 + DisX, 84 + DisY)
+		Delay 300
+		a = MsgBox("JJC已完成。", 64 + 4096, "自动竞技场")
+		Call Plugin.Window.SetText(Hwnd3, "星纪元")
+		EndScript
+	Else 
+		Call Plugin.Bkgnd.LeftClick(Hwnd2, 557 + DisX, 357 + DisY)
+		Goto Start
+	End If
+Else 
+	Call Plugin.Bkgnd.LeftClick(Hwnd2, 360 + DisX, 60 + DisY)
+	temp = temp + 1
+	Goto Start
+End If
+End Sub
+
+
+/*Event Form1.Load
+	PutAttachment ".\plugin\","1.jpg"
+	Form1.PictureBox1.Picture = ".\plugin\1.jpg"
+	BeginThread close
+End Event
+Sub close()
+	Delay 2000
+	Hwnd = Plugin.Window.Find(0, "微风 - v8.2")
+	HwndEx2 = Plugin.Window.FindEx(Hwnd, 0, "Shell Embedding", 0)
+	HwndAd = Plugin.Window.Find("AfxFrameOrView100s", 0)
+	Call Plugin.lxj_Plug.lxj_CloseWindowEX (HwndEx2)
+	Call Plugin.lxj_Plug.lxj_CloseWindowEX(HwndAd)
+	Delay 3000
+	HwndEx1 = Plugin.lxj_Plug.lxj_FindChildHwnd(Hwnd, "精灵", "Static", 1, 1)
+	Call Plugin.lxj_Plug.lxj_CloseWindowEX(HwndEx1)
+End Sub*/
